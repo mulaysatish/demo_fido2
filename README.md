@@ -3,8 +3,13 @@
 This folder contains the source code for the WebAuthn / FIDO2 API codelab. It gives an introduction into implementing FIDO2 API,
 - https://codelabs.developers.google.com/codelabs/fido2-for-android/
 
+![Demo App](https://github.com/mulaysatish/demo_fido2/blob/master/demo_video/fido_test.gif)
+
 ### License
 
+<video width="320" height="240" controls>
+  <source src="https://github.com/mulaysatish/demo_fido2/blob/master/demo_video/fido_test.mp4" type="video/mp4">
+</video>
 
 ```
 Copyright 2019 Google, Inc.
