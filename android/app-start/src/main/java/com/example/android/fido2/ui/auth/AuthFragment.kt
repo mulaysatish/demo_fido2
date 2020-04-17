@@ -62,18 +62,30 @@ class AuthFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.signinIntent.observeOnce(this) { intent ->
+        viewModel.signinIntent.observeOnce(this) { pendingIntent ->
             val a = activity
-            if (intent.hasPendingIntent() && a != null) {
-                try {
 
-                    // Launch the fingerprint dialog.
-                    intent.launchPendingIntent(a, MainActivity.REQUEST_FIDO2_SIGNIN)
-
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e(TAG, "Error launching pending intent for signin request", e)
-                }
+            pendingIntent?.let { intent ->
+                a?.startIntentSenderForResult(
+                    intent.intentSender,
+                    MainActivity.REQUEST_FIDO2_SIGNIN,
+                    null,
+                    0,
+                    0,
+                    0
+                )
             }
+
+//            if (intent.hasPendingIntent() && a != null) {
+//                try {
+//
+//                    // Launch the fingerprint dialog.
+//                    intent.launchPendingIntent(a, MainActivity.REQUEST_FIDO2_SIGNIN)
+//
+//                } catch (e: IntentSender.SendIntentException) {
+//                    Log.e(TAG, "Error launching pending intent for signin request", e)
+//                }
+//            }
         }
     }
 

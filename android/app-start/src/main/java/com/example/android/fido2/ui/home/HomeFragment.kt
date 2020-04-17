@@ -96,16 +96,28 @@ class HomeFragment : Fragment(), DeleteConfirmationFragment.Listener {
 
         // FAB
         binding.add.setOnClickListener {
-            viewModel.registerRequest().observeOnce(requireActivity()) { intent ->
+            viewModel.registerRequest().observeOnce(requireActivity()) { pendingIntent ->
                 val a = activity
-                if (intent.hasPendingIntent() && a != null) {
-                    try {
-                        // Launch the fingerprint dialog.
-                        intent.launchPendingIntent(a, MainActivity.REQUEST_FIDO2_REGISTER)
-                    } catch (e: IntentSender.SendIntentException) {
-                        Log.e(TAG, "Error launching pending intent for register request", e)
-                    }
+
+                pendingIntent?.let {intent ->
+                    a?.startIntentSenderForResult(
+                        intent.intentSender,
+                        MainActivity.REQUEST_FIDO2_REGISTER,
+                        null,
+                        0,
+                        0,
+                        0
+                    )
                 }
+
+//                if (intent.hasPendingIntent() && a != null) {
+//                    try {
+//                        // Launch the fingerprint dialog.
+//                        intent.launchPendingIntent(a, MainActivity.REQUEST_FIDO2_REGISTER)
+//                    } catch (e: IntentSender.SendIntentException) {
+//                        Log.e(TAG, "Error launching pending intent for register request", e)
+//                    }
+//                }
             }
         }
     }

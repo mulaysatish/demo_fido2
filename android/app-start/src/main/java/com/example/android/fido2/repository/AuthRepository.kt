@@ -16,6 +16,7 @@
 
 package com.example.android.fido2.repository
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -36,6 +37,7 @@ import com.google.android.gms.fido.fido2.api.common.AuthenticatorAssertionRespon
 import com.google.android.gms.fido.fido2.api.common.AuthenticatorAttestationResponse
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.tasks.Tasks.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -242,8 +244,8 @@ class AuthRepository(
      * Starts to register a new credential to the server. This should be called only when the
      * sign-in state is [SignInState.SignedIn].
      */
-    fun registerRequest(processing: MutableLiveData<Boolean>): LiveData<Fido2PendingIntent> {
-        val result = MutableLiveData<Fido2PendingIntent>()
+    fun registerRequest(processing: MutableLiveData<Boolean>): LiveData<PendingIntent> {
+        val result = MutableLiveData<PendingIntent>()
         executor.execute {
             fido2ApiClient?.let { client ->
                 processing.postValue(true)
@@ -255,9 +257,9 @@ class AuthRepository(
                     lastKnownChallenge = challenge
                     // Use getRegisterIntent to get an Intent to
                     // open the fingerprint dialog.
-                    val task: Task<Fido2PendingIntent> = client.getRegisterIntent(options)
+                    val task: Task<PendingIntent> = client.getRegisterPendingIntent(options)
                     // Pass the Intent back to the UI.
-                    result.postValue(Tasks.await(task))
+                    result.postValue(await(task))
 
                 } catch (e: Exception) {
                     Log.e(TAG, "Cannot call registerRequest", e)
@@ -324,8 +326,8 @@ class AuthRepository(
      * Starts to sign in with a FIDO2 credential. This should only be called when the sign-in state
      * is [SignInState.SigningIn].
      */
-    fun signinRequest(processing: MutableLiveData<Boolean>): LiveData<Fido2PendingIntent> {
-        val result = MutableLiveData<Fido2PendingIntent>()
+    fun signinRequest(processing: MutableLiveData<Boolean>): LiveData<PendingIntent> {
+        val result = MutableLiveData<PendingIntent>()
         executor.execute {
             fido2ApiClient?.let { client ->
                 processing.postValue(true)
@@ -338,9 +340,9 @@ class AuthRepository(
                     // Save the challenge string.
                     lastKnownChallenge = challenge
                     // Create an Intent to open the fingerprint dialog.
-                    val task = client.getSignIntent(options)
+                    val task = client.getSignPendingIntent(options)
                     // Pass the Intent back to the UI.
-                    result.postValue(Tasks.await(task))
+                    result.postValue(await(task))
 
                 } finally {
                     processing.postValue(false)
